@@ -1,20 +1,44 @@
+import os
+import shutil
 from pathlib import Path
 
-
 def main():
-    replay_to_log()
+    folder_setup()
 
 
 
-# Copy replays from replays folder to log files in logs folder
-def replay_to_log():
-    p = Path("resources/logs")
-    p.mkdir(exist_ok=True)
+# Setup folders
+def folder_setup():
+        clean_folders()
+        copy_replays()
+        convert_replays()
+
+def clean_folders():
+    try:
+        shutil.rmtree("src/logs")
+    except OSError as e:
+        pass
+
+def copy_replays():
+    shutil.copytree("src/replays", "src/logs")
+
+def convert_replays():
+    replays = os.listdir("src/logs")
+    for replay in replays:
+        p = Path("src/logs/" + str(replay))
+        p.rename(p.with_suffix(".log"))
 
 
 
 
-# Read through log files
+# Clear out replays
+def clean_replays():
+    pass
+
+
+
+
+# Read through replays
 ## Create a folder for each trainer found in replays
 ## Create a file for each Pokemon in their folder
 ## Store following data in each Pokemons file
@@ -25,7 +49,18 @@ def replay_to_log():
 ### Number of times each item was used
 ### Number of times each ability was used
 ### Highest Damage Move in each game
+def get_replays():
+    replays = os.listdir("src/logs")
+    for replay in replays:
+        read_replays(replay)
 
+def read_replays(battle):
+    file = open("src/logs/" + str(battle), "r")
+    read = file.readlines()
+    print(read)
+
+def get_teams():
+    get_replays()
 
 
 
