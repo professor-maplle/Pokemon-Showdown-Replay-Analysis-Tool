@@ -1,45 +1,62 @@
 import os
 import shutil
+import bs4
 from pathlib import Path
 
 def main():
     folder_setup()
+    get_trainers()
 
 
 
 # Setup folders
 def folder_setup():
         clean_folders()
-        copy_replays()
-        convert_replays()
+        create_logs_dir()
+        get_battle_logs()
 
+## Deletes logs folder so it can be filled with new logs
 def clean_folders():
     try:
         shutil.rmtree("src/logs")
     except OSError as e:
         pass
 
-def copy_replays():
-    shutil.copytree("src/replays", "src/logs")
+## Create logs directory to store battle logs in
+def create_logs_dir():
+    p = Path("src/logs")
+    try:
+        p.mkdir()
+    except FileExistsError as exc:
+        pass
 
-def convert_replays():
-    replays = os.listdir("src/logs")
+## Runs through each replay, obtaining their battle log data and passing it into save_log()
+def get_battle_logs():
+    replays=os.listdir("src/replays")
     for replay in replays:
-        p = Path("src/logs/" + str(replay))
-        p.rename(p.with_suffix(".log"))
+        file = open("src/replays/" + str(replay), "r")
+        read = file.readlines()
+        file.close()
+        soup = bs4.BeautifulSoup(str(read), "html.parser")
+        battle_log = soup.find(class_="battle-log-data")
+        save_log(battle_log, str(replay))
 
-
-
-
-# Clear out replays
-def clean_replays():
-    pass
+## Saves battle log data into a new file in logs directory
+def save_log(battle_log, file_name):
+    file = open("src/logs/" + file_name, "x")
+    p = Path("src/logs/" + file_name)
+    p.rename(p.with_suffix(".log"))
+    file.write(str(battle_log))
+    file.close()
 
 
 
 
 # Read through replays
 ## Create a folder for each trainer found in replays
+def get_trainers():
+    pass
+
 ## Create a file for each Pokemon in their folder
 ## Store following data in each Pokemons file
 ### Number of battles fought
@@ -49,18 +66,7 @@ def clean_replays():
 ### Number of times each item was used
 ### Number of times each ability was used
 ### Highest Damage Move in each game
-def get_replays():
-    replays = os.listdir("src/logs")
-    for replay in replays:
-        read_replays(replay)
 
-def read_replays(battle):
-    file = open("src/logs/" + str(battle), "r")
-    read = file.readlines()
-    print(read)
-
-def get_teams():
-    get_replays()
 
 
 
