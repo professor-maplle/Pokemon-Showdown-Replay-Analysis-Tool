@@ -7,6 +7,8 @@ def main():
     folder_setup()
     get_battle_logs()
     get_trainers()
+    get_pokemon()
+    get_stats()
 
 
 
@@ -115,7 +117,50 @@ def get_trainer_two(read):
 def get_pokemon():
     logs = os.listdir("src/logs")
     for log in logs:
-        pass
+        file = open("src/logs/" + log, "r")
+        read = file.readlines()
+        file.close()
+        trainer_one_pokemon(read)
+        trainer_two_pokemon(read)
+
+### Find trainer ones team
+def trainer_one_pokemon(read):
+    for line in read:
+        name = get_trainer_one(read)
+
+        if line.find("|poke|p1|") != -1:
+            line = line.strip("|poke|p1|")
+            if line.find("|"):
+                line = line.replace("|","")
+            if line.find(", F"):
+                line = line.replace(", F","")
+            if line.find(", M"):
+                line = line.replace(", M","")
+
+            try:
+                file = open("src/trainers/" + name + "/" + line, "x")
+            except:
+                pass
+
+
+### Find trainer twos team
+def trainer_two_pokemon(read):
+    for line in read:
+        name = get_trainer_two(read)
+
+        if line.find("|poke|p2|") != -1:
+            line = line.strip("|poke|p2|")
+            if line.find("|"):
+                line = line.replace("|","")
+            if line.find(", F"):
+                line = line.replace(", F","")
+            if line.find(", M"):
+                line = line.replace(", M","")
+
+            try:
+                file = open("src/trainers/" + name + "/" + line, "x")
+            except:
+                pass
 
 ## Store following data in each Pokemons file
 ### Number of battles fought
@@ -125,7 +170,8 @@ def get_pokemon():
 ### Number of times each item was used
 ### Number of times each ability was used
 ### Highest Damage Move in each game
-
+def get_stats():
+    pass
 
 
 
